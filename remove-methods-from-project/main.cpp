@@ -22,56 +22,39 @@ public:
     if 2) is true, remove methods from graph, otherwise leave untouched
     */
     bool safe2remove = true;
-    // Invocations is list of directed edges, convert to adjacency lists
-    vector<vector<int>> direct_successors(n), direct_predecessors(n);
+    // Invocations is list of directed edges, convert to adjacency list
+    vector<vector<int>> direct_successors(n);
     for (size_t j = 0; j < invocations.size(); ++j) {
       int O = invocations[j][0], D = invocations[j][1];
       direct_successors[O].push_back(D);
-      direct_predecessors[D].push_back(O);
     }
     // Breadth-first search for direct and indirect successors of k
-    bool* mark_visited = new bool[n];
     bool* is_k_reachable = new bool[n];
-    bool* is_k_reachable_predecessor = new bool[n];
     for (size_t j = 0; j < n; ++j) {
-      mark_visited[j] = false;
       is_k_reachable[j] = false;
-      is_k_reachable_predecessor[j] = false;
     }
     vector<int> k_reachable = {k};
     k_reachable.reserve(n/2);
     queue<int> frontier;
     frontier.push(k);
-    mark_visited[k] = true;
     is_k_reachable[k] = true;
     while (not(frontier.empty())) {
       int node = frontier.front();
       frontier.pop();
       for (int successor : direct_successors[node]) {
-        if (not(mark_visited[successor])) {
+        if (not(is_k_reachable[successor])) {
           frontier.push(successor);
           k_reachable.push_back(successor);
-          mark_visited[successor] = true;
           is_k_reachable[successor] = true;
         }
       }
-      for (int predecessor : direct_predecessors[node]) {
-        is_k_reachable_predecessor[predecessor] = true;
-        if (not(is_k_reachable)) {
-          safe2remove = false;
-        }
-      }
-      if (not(safe2remove)) {
-        break;
-      }
     }
 
-    if (safe2remove) {
-      for (size_t j = 0; j < n; ++j) {
-        if (is_k_reachable_predecessor[j] && not(is_k_reachable[j])) {
-          safe2remove = false;
-          break;
-        }
+    for (size_t j = 0; j < invocations.size(); ++j) {
+      int O = invocations[j][0], D = invocations[j][1];
+      if ((is_k_reachable[D]) and not(is_k_reachable[O])) {
+        safe2remove = false;
+        break;
       }
     }
 
@@ -84,7 +67,7 @@ public:
       }
     }
 
-    delete[] mark_visited, is_k_reachable, is_k_reachable_predecessor ;
+    delete[] is_k_reachable;
     return methods;
     }
 };
