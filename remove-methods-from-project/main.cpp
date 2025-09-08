@@ -15,11 +15,11 @@ class Solution {
 public:
   vector<int> remainingMethods(int n, int k, vector<vector<int>>& invocations) {
     /*
-    I am given an adjacency list `invocations` describing a directed graph
-    I have to compute 1) the reachable set of node k
+    I am given edges in `invocations` describing a directed graph.
+    I have to compute 1) the reachable set of node k (direct and indirect successors)
     and 2) check that there are no predecessors of this set outside
     of the set
-    if 2) is true, remove methods from graph, otherwise leave untouched
+    if 2) is true, remove 1) from graph, otherwise leave untouched
     */
     bool safe2remove = true;
     // Invocations is list of directed edges, convert to adjacency list
